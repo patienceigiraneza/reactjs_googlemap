@@ -8,7 +8,7 @@ function Header() {
             <li className='px-4'> About </li>
         </ul>
 
-        <div className='mr-16'>
+        <div className='pr-16'>
             Startup
         </div>
     </div>

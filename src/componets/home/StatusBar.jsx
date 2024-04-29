@@ -8,7 +8,7 @@ function StatusBar() {
 
   return (
     <>
-    <div className='flex '>
+    <div className='flex pl-4'>
         <div className='px-4'> <span className='text-xl'>Current Location: </span> {location} </div>
         <div className='px-4'> <span className='text-xl'>Next Bus Stop: </span> {nextStop} </div>
         <div className='px-4'> <span className='text-xl'>Distance: </span> {distance} km </div>

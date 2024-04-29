@@ -5,7 +5,8 @@ import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 
 function Map() {
     const [userLocation, setUserLocation] = useState(null);
-    const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+    const googleMapsApiKey = import.meta.env.GOOGLE_MAPS_API_KEY;
+    console.log("Keys:   ", googleMapsApiKey)
 
     useEffect(() => {
       navigator.geolocation.getCurrentPosition(
@@ -32,7 +33,7 @@ function Map() {
 
     <div className='mt-8 rounded w-11/12 ml-4'>
           <LoadScript
-      googleMapsApiKey={apiKey}
+      googleMapsApiKey="AIzaSyA1vtpHnKD0nC0yclF-qLnLmW2G3cWbxVs"
     //   libraries={libraries}
     libraries={['places']}
     >
