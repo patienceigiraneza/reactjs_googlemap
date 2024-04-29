@@ -1,9 +1,12 @@
 import React from 'react'
+import Map from '../componets/home/Map'
+import StatusBar from '../componets/home/StatusBar'
 
 function HomePage() {
   return (
     <div>
-    <div className='bg-green-300 w-full'>Welcome to the Home Page</div>
+      < StatusBar />
+      < Map />
   </div>
   )
 }
