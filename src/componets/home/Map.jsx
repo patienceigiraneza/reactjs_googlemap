@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-// import { libraries } from './constants';
+
 
 function Map() {
     const [userLocation, setUserLocation] = useState(null);
@@ -13,6 +13,7 @@ function Map() {
         (position) => {
           const { latitude, longitude } = position.coords;
           setUserLocation({ lat: latitude, lng: longitude });
+
         },
         (error) => {
           console.error('Error getting location:', error);
@@ -20,6 +21,8 @@ function Map() {
       );
     }, []);
 
+
+  console.log("Location", userLocation);
 
   const mapContainerStyle = {
     width: '100vw',
@@ -33,16 +36,18 @@ function Map() {
 
     <div className='mt-8 rounded w-11/12 ml-4'>
           <LoadScript
-      googleMapsApiKey="AIzaSyA1vtpHnKD0nC0yclF-qLnLmW2G3cWbxVs"
-    //   libraries={libraries}
-    libraries={['places']}
+      googleMapsApiKey={googleMapsApiKey}
+      // libraries={libraries}
+
     >
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         zoom={16}
         center={userLocation}
       >
-        <Marker position={userLocation} />
+        <Marker position={userLocation} title='Ride Location' />
+
+
       </GoogleMap>
     </LoadScript>
 
