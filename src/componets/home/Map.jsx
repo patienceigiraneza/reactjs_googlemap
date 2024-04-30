@@ -1,12 +1,11 @@
 import React from 'react'
 import { useState, useEffect } from 'react';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-
+import { GoogleMap, LoadScript, MarkerF } from '@react-google-maps/api';
+import { GOOGLE_MAP_KEYS } from '../../config/Keys';
+import locations from '../../config/Data';
 
 function Map() {
     const [userLocation, setUserLocation] = useState(null);
-    const googleMapsApiKey = import.meta.env.GOOGLE_MAPS_API_KEY;
-    console.log("Keys:   ", googleMapsApiKey)
 
     useEffect(() => {
       navigator.geolocation.getCurrentPosition(
@@ -36,16 +35,21 @@ function Map() {
 
     <div className='mt-8 rounded w-11/12 ml-4'>
           <LoadScript
-      googleMapsApiKey={googleMapsApiKey}
+      googleMapsApiKey={GOOGLE_MAP_KEYS}
       // libraries={libraries}
 
     >
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
-        zoom={16}
+        zoom={12}
         center={userLocation}
       >
-        <Marker position={userLocation} title='Ride Location' />
+
+        {locations.map((location)=>(
+            <MarkerF position={{lat:location.lat, lng: location.lng}} title={location.name} />
+        ))}
+
+        <MarkerF position={userLocation} title='Ride Location' color="blue" />
 
 
       </GoogleMap>
