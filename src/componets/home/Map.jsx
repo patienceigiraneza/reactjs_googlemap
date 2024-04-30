@@ -32,7 +32,7 @@ function Map() {
         );
     }, []);
 
-    const calculateDirections = async () => {
+    const generateGoogleMapRoute = async () => {
         if (userLocation) {
             if (!directionsServiceRef.current) {
                 directionsServiceRef.current = new window.google.maps.DirectionsService();
@@ -61,12 +61,35 @@ function Map() {
         }
     };
 
-    const getDistance = async () => {
+    const getStatusBarData = async (dest) => {
+        generateGoogleMapRoute(); // display the routes on maps
+
+
+        var dest_addr_point
+        if (dest == 0){
+            dest_addr_point = locations[0]
+        }else{
+            dest_addr_point = locations[locations.length -1]
+        }
+
+        const url = `http://localhost:5000/distance?origins=${userLocation.lat},${userLocation.lng}&destinations=${dest_addr_point.lat},${dest_addr_point.lng}&key=${GOOGLE_MAP_KEYS}`;
+
+        axios.get(url, {
+            headers: {
+            'Access-Control-Allow-Origin': '*',
+            },
+            })
+        .then(response => {
+        const mydistance = parseInt(response.data.rows[0].elements[0].distance.value,10);
+        })
+        .catch(error => {
+        console.error('Error:', error);
+        });
+
+
+
         var minDistance = 0;
         for (const myBusStop of locations) {
-                // const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${userLocation.lat},${userLocation.lng}&destinations=${locations[locations.length-1].lat},${locations[locations.length-1].lng}&key=${GOOGLE_MAP_KEYS}`;
-
-
             const url = `http://localhost:5000/distance?origins=${userLocation.lat},${userLocation.lng}&destinations=${myBusStop.lat},${myBusStop.lng}&key=${GOOGLE_MAP_KEYS}`;
 
             axios.get(url, {
@@ -98,11 +121,10 @@ function Map() {
 
     }
 
-    useEffect(() => {
-        calculateDirections();
-        getDistance();
+    // useEffect(() => {
+    //     generateGoogleMapRoute();
 
-    }, [userLocation]);
+    // }, [userLocation]);
 
     const mapContainerStyle = {
         width: '100vw',
@@ -149,7 +171,7 @@ function Map() {
                 </GoogleMap>
             </LoadScript>
 
-            <button onClick={calculateDirections}>Start Journey</button>
+            <button onClick={()=> getStatusBarData(0)}>Start Journey</button>
         </div>
 
         </>
