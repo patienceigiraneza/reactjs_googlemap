@@ -62,6 +62,7 @@ function Map() {
     };
 
     const getStatusBarData = async (dest) => {
+        localStorage.clear();
         generateGoogleMapRoute(); // display the routes on maps
 
 
@@ -70,6 +71,7 @@ function Map() {
             dest_addr_point = locations[0]
         }else{
             dest_addr_point = locations[locations.length -1]
+
         }
 
         const url = `http://localhost:5000/distance?origins=${userLocation.lat},${userLocation.lng}&destinations=${dest_addr_point.lat},${dest_addr_point.lng}&key=${GOOGLE_MAP_KEYS}`;
@@ -83,7 +85,7 @@ function Map() {
         .then(response => {
             const myDistanceToDest = parseInt(response.data.rows[0].elements[0].distance.value,10);
             localStorage.setItem('myDistanceToDest', myDistanceToDest);
-            console.log("We go to: ", response.data.destination_addresses)
+            // console.log("We go to: ", response.data.destination_addresses)
 
         })
         .catch(error => {
@@ -91,7 +93,11 @@ function Map() {
         });
 
         var minDistance = 0;
-        for (const myBusStop of locations) {
+
+
+        let startIndex = dest === 0 ? 0 : locations.length - 1;
+        for (let i = startIndex; dest === 0 ? i < locations.length : i >= 0; dest === 0 ? i++ : i--) {
+          const myBusStop = locations[i];
             const url = `http://localhost:5000/distance?origins=${userLocation.lat},${userLocation.lng}&destinations=${myBusStop.lat},${myBusStop.lng}&key=${GOOGLE_MAP_KEYS}`;
 
             axios.get(url, {
@@ -118,6 +124,7 @@ function Map() {
                     })
                 .then(response => {
                      const stopDistanceToDest = parseInt(response.data.rows[0].elements[0].distance.value,10);
+                     console.log(response.data.destination_addresses)
                      localStorage.setItem('stopDistanceToDest', stopDistanceToDest);
                 })
                 .catch(error => {
@@ -129,7 +136,7 @@ function Map() {
                 var myDistanceToDest = localStorage.getItem('myDistanceToDest');
 
 
-                console.log("COmpare: ", stopDistanceToDest, myDistanceToDest)
+                console.log("Compare: ", stopDistanceToDest, myDistanceToDest)
                 if (stopDistanceToDest <= myDistanceToDest) {
                     minDistance = mydistance;
                     setLocation(mylocation);
