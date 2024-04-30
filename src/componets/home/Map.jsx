@@ -126,6 +126,17 @@ function Map() {
 
     // }, [userLocation]);
 
+    useEffect(() => {
+        const updateLocation = (position) => {
+            const { latitude, longitude } = position.coords;
+            setUserLocation({ lat: latitude, lng: longitude });
+        };
+        const watchId = navigator.geolocation.watchPosition(updateLocation);
+        return () => {
+            navigator.geolocation.clearWatch(watchId);
+        };
+    }, []);
+
     const mapContainerStyle = {
         width: '100vw',
         height: '400px',
