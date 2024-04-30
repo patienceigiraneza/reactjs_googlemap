@@ -8,6 +8,7 @@ import {
 } from '@react-google-maps/api';
 import { GOOGLE_MAP_KEYS } from '../../config/Keys';
 import locations from '../../config/Data';
+import axios from 'axios';
 
 function Map() {
     const [userLocation, setUserLocation] = useState(null);
@@ -55,8 +56,30 @@ function Map() {
         }
     };
 
+    const getDistance = async () => {
+        // const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${userLocation.lat},${userLocation.lng}&destinations=${locations[locations.length-1].lat},${locations[locations.length-1].lng}&key=${GOOGLE_MAP_KEYS}`;
+        const url = `http://localhost:5000/distance?origins=${userLocation.lat},${userLocation.lng}&destinations=${locations[locations.length-1].lat},${locations[locations.length-1].lng}&key=${GOOGLE_MAP_KEYS}`;
+        console.log(url)
+
+        axios.get(url, {
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+            },
+            })
+        .then(response => {
+          const distance = response.data.rows[0].elements[0].distance.text;
+          const time = response.data.rows[0].elements[0].duration.text;
+          console.log(`Distance between the two addresses: ${distance} and duration: ${time}`);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+
     useEffect(() => {
-        calculateDirections(); // Call on initial render and when userLocation changes
+        calculateDirections();
+        getDistance();
+
     }, [userLocation]);
 
     const mapContainerStyle = {
