@@ -14,6 +14,11 @@ function Map() {
     const [userLocation, setUserLocation] = useState(null);
     const [directions, setDirections] = useState(null);
     const directionsServiceRef = useRef(null);
+    const [location, setLocation] = useState(null);
+    const [nextStop, setnextStop] = useState(null);
+    const [distance, setDistance] = useState(null);
+    const [time, setTime] = useState(null);
+    const [busStopDistance, setbusStopDistance] = useState(null);
 
     useEffect(() => {
         navigator.geolocation.getCurrentPosition(
@@ -57,23 +62,40 @@ function Map() {
     };
 
     const getDistance = async () => {
-        // const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${userLocation.lat},${userLocation.lng}&destinations=${locations[locations.length-1].lat},${locations[locations.length-1].lng}&key=${GOOGLE_MAP_KEYS}`;
-        const url = `http://localhost:5000/distance?origins=${userLocation.lat},${userLocation.lng}&destinations=${locations[locations.length-1].lat},${locations[locations.length-1].lng}&key=${GOOGLE_MAP_KEYS}`;
-        console.log(url)
+        var minDistance = 0;
+        for (const myBusStop of locations) {
+                // const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${userLocation.lat},${userLocation.lng}&destinations=${locations[locations.length-1].lat},${locations[locations.length-1].lng}&key=${GOOGLE_MAP_KEYS}`;
 
-        axios.get(url, {
-            headers: {
-              'Access-Control-Allow-Origin': '*',
-            },
+
+            const url = `http://localhost:5000/distance?origins=${userLocation.lat},${userLocation.lng}&destinations=${myBusStop.lat},${myBusStop.lng}&key=${GOOGLE_MAP_KEYS}`;
+
+            axios.get(url, {
+                headers: {
+                'Access-Control-Allow-Origin': '*',
+                },
+                })
+            .then(response => {
+            const mylocation = response.data.origin_addresses;
+            const mynextbus = response.data.destination_addresses;
+            const mydistance = parseInt(response.data.rows[0].elements[0].distance.value,10);
+            const mytime = response.data.rows[0].elements[0].duration.value;
+
+            // console.log("Compare: ", mydistance, minDistance);
+            if(mydistance < minDistance || minDistance == 0) {
+                minDistance = mydistance;
+                setLocation(mylocation);
+                setnextStop(mynextbus);
+                setTime(mytime);
+                setDistance(mydistance);
+              console.log(`Name is: ${mynextbus} Distance is: ${mydistance} and duration: ${mytime}`);
+            }
             })
-        .then(response => {
-          const distance = response.data.rows[0].elements[0].distance.text;
-          const time = response.data.rows[0].elements[0].duration.text;
-          console.log(`Distance between the two addresses: ${distance} and duration: ${time}`);
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        });
+            .catch(error => {
+            console.error('Error:', error);
+            });
+        }
+        // console.log(nextStop);
+
     }
 
     useEffect(() => {
@@ -92,6 +114,16 @@ function Map() {
     }
 
     return (
+        <>
+
+        <div className='flex pl-4'>
+            <div className='px-4'> <span className='text-xl'>Current Location: </span> {location} </div>
+            <div className='px-4'> <span className='text-xl'>Next Bus Stop: </span> {nextStop} </div>
+            <div className='px-4'> <span className='text-xl'>Distance: </span> {(distance/1000).toFixed(1)} Km</div>
+            <div className='px-4'> <span className='text-xl'>Time: </span> {(time/60).toFixed(0)} minutes </div>
+        </div>
+
+        {/* Google map  */}
         <div className='mt-8 rounded w-11/12 ml-4'>
             <LoadScript googleMapsApiKey={GOOGLE_MAP_KEYS}>
                 <GoogleMap
@@ -117,8 +149,10 @@ function Map() {
                 </GoogleMap>
             </LoadScript>
 
-            <button onClick={calculateDirections}>Calculate Directions</button>
+            <button onClick={calculateDirections}>Start Journey</button>
         </div>
+
+        </>
     );
 }
 
