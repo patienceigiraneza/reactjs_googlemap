@@ -74,19 +74,21 @@ function Map() {
 
         const url = `http://localhost:5000/distance?origins=${userLocation.lat},${userLocation.lng}&destinations=${dest_addr_point.lat},${dest_addr_point.lng}&key=${GOOGLE_MAP_KEYS}`;
 
+
         axios.get(url, {
             headers: {
             'Access-Control-Allow-Origin': '*',
             },
             })
         .then(response => {
-        const mydistance = parseInt(response.data.rows[0].elements[0].distance.value,10);
+            const myDistanceToDest = parseInt(response.data.rows[0].elements[0].distance.value,10);
+            localStorage.setItem('myDistanceToDest', myDistanceToDest);
+            console.log("We go to: ", response.data.destination_addresses)
+
         })
         .catch(error => {
         console.error('Error:', error);
         });
-
-
 
         var minDistance = 0;
         for (const myBusStop of locations) {
@@ -105,12 +107,38 @@ function Map() {
 
             // console.log("Compare: ", mydistance, minDistance);
             if(mydistance < minDistance || minDistance == 0) {
-                minDistance = mydistance;
-                setLocation(mylocation);
-                setnextStop(mynextbus);
-                setTime(mytime);
-                setDistance(mydistance);
-              console.log(`Name is: ${mynextbus} Distance is: ${mydistance} and duration: ${mytime}`);
+
+                // check if we didn't pass on it
+                const url = `http://localhost:5000/distance?origins=${myBusStop.lat},${myBusStop.lng}&destinations=${dest_addr_point.lat},${dest_addr_point.lng}&key=${GOOGLE_MAP_KEYS}`;
+
+                axios.get(url, {
+                    headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    },
+                    })
+                .then(response => {
+                     const stopDistanceToDest = parseInt(response.data.rows[0].elements[0].distance.value,10);
+                     localStorage.setItem('stopDistanceToDest', stopDistanceToDest);
+                })
+                .catch(error => {
+                console.error('Error:', error);
+                });
+
+
+                var stopDistanceToDest = localStorage.getItem('stopDistanceToDest');
+                var myDistanceToDest = localStorage.getItem('myDistanceToDest');
+
+
+                console.log("COmpare: ", stopDistanceToDest, myDistanceToDest)
+                if (stopDistanceToDest <= myDistanceToDest) {
+                    minDistance = mydistance;
+                    setLocation(mylocation);
+                    setnextStop(mynextbus);
+                    setTime(mytime);
+                    setDistance(mydistance);
+                    console.log(`Name is: ${mynextbus} Distance is: ${mydistance} and duration: ${mytime}`);
+                }
+
             }
             })
             .catch(error => {
@@ -171,7 +199,9 @@ function Map() {
                 </GoogleMap>
             </LoadScript>
 
-            <button onClick={()=> getStatusBarData(0)}>Start Journey</button>
+            Got to:
+            <button className='ml-4' onClick={()=> getStatusBarData(1)}> Kibagagaba </button> or
+            <button  className='ml-4' onClick={()=> getStatusBarData(0)}> Nyabugogo </button>
         </div>
 
         </>
