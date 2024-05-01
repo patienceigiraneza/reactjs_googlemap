@@ -9,6 +9,7 @@ import {
 import { GOOGLE_MAP_KEYS } from '../../config/Keys';
 import locations from '../../config/Data';
 import axios from 'axios';
+import { BACKEND_URL } from '../../config/Keys';
 
 function Map() {
     const [userLocation, setUserLocation] = useState(null);
@@ -72,7 +73,7 @@ function Map() {
             dest_addr_point = locations[locations.length -1]
         }
 
-        const url = `http://localhost:5000/distance?origins=${userLocation.lat},${userLocation.lng}&destinations=${dest_addr_point.lat},${dest_addr_point.lng}&key=${GOOGLE_MAP_KEYS}`;
+        const url = `${BACKEND_URL}/distance?origins=${userLocation.lat},${userLocation.lng}&destinations=${dest_addr_point.lat},${dest_addr_point.lng}&key=${GOOGLE_MAP_KEYS}`;
 
         axios.get(url, {
             headers: {
@@ -90,7 +91,7 @@ function Map() {
 
         var minDistance = 0;
         for (const myBusStop of locations) {
-            const url = `http://localhost:5000/distance?origins=${userLocation.lat},${userLocation.lng}&destinations=${myBusStop.lat},${myBusStop.lng}&key=${GOOGLE_MAP_KEYS}`;
+            const url = `${BACKEND_URL}/distance?origins=${userLocation.lat},${userLocation.lng}&destinations=${myBusStop.lat},${myBusStop.lng}&key=${GOOGLE_MAP_KEYS}`;
 
             axios.get(url, {
                 headers: {
