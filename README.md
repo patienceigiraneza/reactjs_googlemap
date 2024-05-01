@@ -32,11 +32,11 @@ The Kigali Real-Time Ride Tracker is an application designed to assist drivers w
 5. Add your API keys in the file `src/config/Keys.js`
 
 ### Starting the project
-1. On the root of directory nun `node server.js`. This will start the backend at http://localhost:5000 which will be used to request for data from Google Map on behalf of the application.
-2. Open another terminal and run `npm run dev`. This will start frontend of application localy.
+1. On the root of directory run `node server.js`. This will start the backend at http://localhost:5000 which will be used to request for data from Google Map on behalf of the application.
+2. Open another terminal and run `npm run dev`. This will start frontend of application locally.
 3. In the browser, open the frontend of application and allow browser to access your location.
 
-### Troubleshoting
+### Troubleshooting
 1. Ensure you have assigned the correct Google Maps API key to the GOOGLE_MAP_KEYS variable in the src/config/Keys.js file.
 2. Verify that the backend server is running at http://localhost:5000. If not, adjust the backend server address in the Keys.js file if necessary.
 3. Make sure you have granted location access to both the web browser and the local application.
