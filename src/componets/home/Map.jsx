@@ -3,7 +3,6 @@ import {
   GoogleMap,
   LoadScript,
   MarkerF,
-  DirectionsService,
   DirectionsRenderer,
 } from "@react-google-maps/api";
 import { GOOGLE_MAP_KEYS } from "../../config/Keys";
@@ -60,15 +59,15 @@ function Map() {
     if (dest == 0) {
       dest_addr_point = locations[0];
       setTripNumber(0);
-    } else if(dest == 1) {
+    } else if (dest == 1) {
       dest_addr_point = locations[locations.length - 1];
       setTripNumber(1);
     } else {
-        setTripNumber(null);
-        setnextStop(null);
-        setDistance(null);
-        setTime(null);
-        return 0;
+      setTripNumber(null);
+      setnextStop(null);
+      setDistance(null);
+      setTime(null);
+      return 0;
     }
 
     const url = `${BACKEND_URL}/distance?origins=${busLocation.lat},${busLocation.lng}&destinations=${dest_addr_point.lat},${dest_addr_point.lng}&key=${GOOGLE_MAP_KEYS}`;
@@ -143,16 +142,14 @@ function Map() {
             var stopDistanceToDest = localStorage.getItem("stopDistanceToDest");
             var myDistanceToDest = localStorage.getItem("myDistanceToDest");
 
-            console.log("Compare: ", stopDistanceToDest, myDistanceToDest);
+            // console.log("Compare: ", stopDistanceToDest, myDistanceToDest);
             if (stopDistanceToDest <= myDistanceToDest) {
               minDistance = mydistance;
               setLocation(mylocation);
               setnextStop(mynextbus);
               setTime(mytime);
               setDistance(mydistance);
-              console.log(
-                `Name is: ${mynextbus} Distance is: ${mydistance} and duration: ${mytime}`
-              );
+              // console.log( `Name is: ${mynextbus} Distance is: ${mydistance} and duration: ${mytime}` );
             }
           }
         })
@@ -166,9 +163,6 @@ function Map() {
     const updateLocation = (position) => {
       const { latitude, longitude } = position.coords;
       setBusLocation({ lat: latitude, lng: longitude });
-
-      // uncomment the next line to test with address location in the route inseade of yours
-      // setBusLocation({ lat: -1.9528681, lng: 30.0977072 });
     };
     const watchId = navigator.geolocation.watchPosition(updateLocation);
     return () => {
@@ -183,10 +177,11 @@ function Map() {
   };
 
   if (!busLocation) {
-    return <div className="flex justify-center items-center h-screen">
-    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-400"></div>
-  </div>
-  ;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-400"></div>
+      </div>
+    );
   }
 
   return (
@@ -195,9 +190,7 @@ function Map() {
         <div className="px-4 pt-4 md:w-5/12">
           <div className="text-xl md:ml-8 text-gray-700 font-extrabold md:mb-6 md:mt-6 uppercase underline underline-offset-4">
             {" "}
-            {tripNumber
-              ? "Ride tracking Details"
-              : "Ride tracking app"}
+            {tripNumber ? "Ride tracking Details" : "Ride tracking app"}
           </div>
 
           <div className="md:flex md:ml-8 text-gray-600 flex-col w-11/12 md:w-full">
@@ -219,7 +212,8 @@ function Map() {
               {location}
             </div>
             <div className="md:my-4 mb-2 md:mb-0 md:mr-2 md:w-auto">
-              <span className="font-semibold">Next Bus Stop: </span> {nextStop != null ? nextStop :" _"}
+              <span className="font-semibold">Next Bus Stop: </span>{" "}
+              {nextStop != null ? nextStop : " _"}
             </div>
             <div className="  md:my-4 mb-2 md:mb-0 md:mr-2 md:w-auto">
               <span className="font-semibold">Distance Left: </span>{" "}
@@ -231,36 +225,39 @@ function Map() {
             </div>
 
             {tripNumber != 0 && tripNumber != 1 ? (
-            <div className="mb-2  mt-6">
-              <div className="mb-4 md:mt-4 underline underline-offset-4 text-gray-700">
-                {" "}
-                Where is your destination address?{" "}
+              <div className="mb-2  mt-6">
+                <div className="mb-4 md:mt-4 underline underline-offset-4 text-gray-700">
+                  {" "}
+                  Where is your destination address?{" "}
+                </div>
+                <button
+                  className="py-2 px-4 rounded bg-gradient-to-br from-lime-500 to-teal-500 text-gray-100 font-semibold"
+                  onClick={() => getStatusBarData(0)}
+                >
+                  {" "}
+                  Nyabugogo{" "}
+                </button>
+                <span className="mx-2"> or </span>
+                <button
+                  className="py-2 px-4 rounded bg-gradient-to-br from-teal-500 to-lime-500 text-gray-100 font-semibold"
+                  onClick={() => getStatusBarData(1)}
+                >
+                  {" "}
+                  Kimironko{" "}
+                </button>{" "}
               </div>
-              <button
-                className="py-2 px-4 rounded bg-gradient-to-br from-lime-500 to-teal-500 text-gray-100 font-semibold"
-                onClick={() => getStatusBarData(0)}
-              >
-                {" "}
-                Nyabugogo{" "}
-              </button>
-              <span className="mx-2"> or </span>
-              <button
-                className="py-2 px-4 rounded bg-gradient-to-br from-teal-500 to-lime-500 text-gray-100 font-semibold"
-                onClick={() => getStatusBarData(1)}
-              >
-                {" "}
-                Kimironko{" "}
-              </button>{" "}
-            </div>):(
-            <>
-            <button
-                className="py-2 px-4 md:mt-16 max-w-56 rounded bg-gradient-to-br from-red-500 to-orange-500 text-gray-100 font-semibold"
-                onClick={() => getStatusBarData(null)}
-              > Reset </button>
-            </>
-          )}
+            ) : (
+              <>
+                <button
+                  className="py-2 px-4 md:mt-16 max-w-56 rounded bg-gradient-to-br from-red-500 to-orange-500 text-gray-100 font-semibold"
+                  onClick={() => getStatusBarData(null)}
+                >
+                  {" "}
+                  Reset{" "}
+                </button>
+              </>
+            )}
           </div>
-
         </div>
 
         {/* Google map  */}

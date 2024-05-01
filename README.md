@@ -1,27 +1,30 @@
 # Kigali Real Time Ride Tracker
 
-### Introduction 
-Kigali Real Time Ride Tracker is an application designed to assist drivers of a transportation agency in Kigali, 
-while they are navigating in route Nyabugogo to Kimironko bus stops. 
-The application provides real-time information about the bus's location, distance to the next bus stop, and estimated time of arrival to the next bus stop. 
- 
- ### Features
- 1. Real time location for the bus
- 2. Information for the next bus stop 
- 3. Distance to next stop
- 4. Estimated time of arrival to the next bus stop
+### Introduction
+The Kigali Real-Time Ride Tracker is an application designed to assist drivers with a transportation agency in Kigali while navigating between the Nyabugogo and Kimironko bus stops.
 
-### Technology used 
+### Features
+1. Real-time bus location tracking
+2. Next bus stop information
+3. Distance to the next bus stop
+4. Estimated time of arrival (ETA) at the next bus stop
+
+### Technology used
 1. Frontend: ReactJs
 2. Backend: NodeJs (ExpressJs)
 3. Location tracking: Google Map Api service
 
-### Requirements
-1. NodeJs
-2. Browser
-3. Personal Computer or mobile phone that has GPS tracker
+### System analyis
 
-### Local Setup 
+![Screenshot](./public/system_diagram.png)
+
+## Local setup and installation
+### Requirements
+1. NodeJS installed
+2. Web browser
+3. Personal computer with GPS enabled (or mobile phone)
+
+### Local Setup
 1. Clone the repository `git clone {url}`
 2. Go to download location `cd {folder_name}`
 3. Install node packages `npm install`
@@ -34,10 +37,9 @@ The application provides real-time information about the bus's location, distanc
 3. In the browser, open the frontend of application and allow browser to access your location.
 
 ### Troubleshoting
-1. Make sure you assigned correct API keys in the file `src/config/Keys.js` to the variable 'GOOGLE_MAP_KEYS'.
-2. Make sure you opened the backend and is accessible at http://localhost:5000 otherwise change backend address in Keys.js file.
-3. Make sure you allowed both of browser and local application to access your location. 
-
+1. Ensure you have assigned the correct Google Maps API key to the GOOGLE_MAP_KEYS variable in the src/config/Keys.js file.
+2. Verify that the backend server is running at http://localhost:5000. If not, adjust the backend server address in the Keys.js file if necessary.
+3. Make sure you have granted location access to both the web browser and the local application.
 
 ### Screenshoots
 
@@ -46,5 +48,5 @@ The application provides real-time information about the bus's location, distanc
 
 
 
-    
- 
+
+

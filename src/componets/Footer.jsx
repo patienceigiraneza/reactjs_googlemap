@@ -13,7 +13,7 @@ function Footer() {
 
         <div className="w-1/3 m-auto flex justify-center items-center">
           {" "}
-          <FiAlertCircle  className="text-white  mt-4 text-2xl cursor-pointer" />{" "}
+          <FiAlertCircle className="text-white  mt-4 text-2xl cursor-pointer" />{" "}
         </div>
 
         <div className="w-1/3 m-auto flex justify-center items-center">
