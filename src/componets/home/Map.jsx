@@ -60,9 +60,15 @@ function Map() {
     if (dest == 0) {
       dest_addr_point = locations[0];
       setTripNumber(0);
-    } else {
+    } else if(dest == 1) {
       dest_addr_point = locations[locations.length - 1];
       setTripNumber(1);
+    } else {
+        setTripNumber(null);
+        setnextStop(null);
+        setDistance(null);
+        setTime(null);
+        return 0;
     }
 
     const url = `${BACKEND_URL}/distance?origins=${busLocation.lat},${busLocation.lng}&destinations=${dest_addr_point.lat},${dest_addr_point.lng}&key=${GOOGLE_MAP_KEYS}`;
@@ -173,25 +179,28 @@ function Map() {
   const isMobile = window.innerWidth <= 768;
   const mapContainerStyle = {
     width: isMobile ? "86vw" : "56vw",
-    height: "360px",
+    height: "420px",
   };
 
   if (!busLocation) {
-    return <div>Loading...</div>;
+    return <div className="flex justify-center items-center h-screen">
+    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-400"></div>
+  </div>
+  ;
   }
 
   return (
     <>
-      <div className="md:flex">
+      <div className="md:flex mb-16 md:mb-1">
         <div className="px-4 pt-4 md:w-5/12">
-          <div className="text-xl text-gray-700 font-extrabold md:mb-6 md:mt-6 uppercase underline underline-offset-4">
+          <div className="text-xl md:ml-8 text-gray-700 font-extrabold md:mb-6 md:mt-6 uppercase underline underline-offset-4">
             {" "}
             {tripNumber
               ? "Ride tracking Details"
               : "Ride tracking app"}
           </div>
 
-          <div className="md:flex text-gray-600 flex-col w-11/12 md:w-full">
+          <div className="md:flex md:ml-8 text-gray-600 flex-col w-11/12 md:w-full">
             <div className="pr-4 md:px-0 mb-2 mt-3 md:mt-0 md:mb-0 md:mr-2 md:w-auto">
               <span className="font-semibold  md:my-4"> Trip: </span>{" "}
               {tripNumber == 0 || tripNumber == 1 ? (
@@ -202,7 +211,7 @@ function Map() {
                     : "Nyabugogo - Kimironko"}
                 </span>
               ) : (
-                <span></span>
+                <span> _ _ _</span>
               )}
             </div>
             <div className="md:my-4 mb-2 md:mb-0 md:mr-2 md:w-auto">
@@ -210,7 +219,7 @@ function Map() {
               {location}
             </div>
             <div className="md:my-4 mb-2 md:mb-0 md:mr-2 md:w-auto">
-              <span className="font-semibold">Next Bus Stop: </span> {nextStop}
+              <span className="font-semibold">Next Bus Stop: </span> {nextStop != null ? nextStop :" _"}
             </div>
             <div className="  md:my-4 mb-2 md:mb-0 md:mr-2 md:w-auto">
               <span className="font-semibold">Distance Left: </span>{" "}
@@ -220,8 +229,10 @@ function Map() {
               <span className="font-semibold">Time remaining: </span>{" "}
               {(time / 60).toFixed(0)} minutes
             </div>
+
+            {tripNumber != 0 && tripNumber != 1 ? (
             <div className="mb-2  mt-6">
-              <div className="mb-4 underline underline-offset-4">
+              <div className="mb-4 md:mt-4 underline underline-offset-4 text-gray-700">
                 {" "}
                 Where is your destination address?{" "}
               </div>
@@ -240,8 +251,16 @@ function Map() {
                 {" "}
                 Kimironko{" "}
               </button>{" "}
-            </div>
+            </div>):(
+            <>
+            <button
+                className="py-2 px-4 md:mt-16 max-w-56 rounded bg-gradient-to-br from-red-500 to-orange-500 text-gray-100 font-semibold"
+                onClick={() => getStatusBarData(null)}
+              > Reset </button>
+            </>
+          )}
           </div>
+
         </div>
 
         {/* Google map  */}
