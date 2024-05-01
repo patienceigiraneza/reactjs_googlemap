@@ -12,29 +12,18 @@ import axios from 'axios';
 import { BACKEND_URL } from '../../config/Keys';
 
 function Map() {
-    const [userLocation, setUserLocation] = useState(null);
+    const [busLocation, setBusLocation] = useState(null);
     const [directions, setDirections] = useState(null);
     const directionsServiceRef = useRef(null);
     const [location, setLocation] = useState(null);
     const [nextStop, setnextStop] = useState(null);
     const [distance, setDistance] = useState(null);
     const [time, setTime] = useState(null);
-    const [busStopDistance, setbusStopDistance] = useState(null);
+    // const [busStopDistance, setbusStopDistance] = useState(null);
 
-    useEffect(() => {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const { latitude, longitude } = position.coords;
-                setUserLocation({ lat: latitude, lng: longitude });
-            },
-            (error) => {
-                console.error('Error getting location:', error);
-            }
-        );
-    }, []);
 
     const generateGoogleMapRoute = async () => {
-        if (userLocation) {
+        if (busLocation) {
             if (!directionsServiceRef.current) {
                 directionsServiceRef.current = new window.google.maps.DirectionsService();
             }
@@ -63,6 +52,7 @@ function Map() {
     };
 
     const getStatusBarData = async (dest) => {
+        localStorage.clear();
         generateGoogleMapRoute(); // display the routes on maps
 
 
@@ -71,9 +61,11 @@ function Map() {
             dest_addr_point = locations[0]
         }else{
             dest_addr_point = locations[locations.length -1]
+
         }
 
-        const url = `${BACKEND_URL}/distance?origins=${userLocation.lat},${userLocation.lng}&destinations=${dest_addr_point.lat},${dest_addr_point.lng}&key=${GOOGLE_MAP_KEYS}`;
+        const url = `${BACKEND_URL}/distance?origins=${busLocation.lat},${busLocation.lng}&destinations=${dest_addr_point.lat},${dest_addr_point.lng}&key=${GOOGLE_MAP_KEYS}`;
+
 
         axios.get(url, {
             headers: {
@@ -81,17 +73,22 @@ function Map() {
             },
             })
         .then(response => {
-        const mydistance = parseInt(response.data.rows[0].elements[0].distance.value,10);
+            const myDistanceToDest = parseInt(response.data.rows[0].elements[0].distance.value,10);
+            localStorage.setItem('myDistanceToDest', myDistanceToDest);
+            // console.log("We go to: ", response.data.destination_addresses)
+
         })
         .catch(error => {
         console.error('Error:', error);
         });
 
-
-
         var minDistance = 0;
-        for (const myBusStop of locations) {
-            const url = `${BACKEND_URL}/distance?origins=${userLocation.lat},${userLocation.lng}&destinations=${myBusStop.lat},${myBusStop.lng}&key=${GOOGLE_MAP_KEYS}`;
+
+
+        let startIndex = dest === 0 ? 0 : locations.length - 1;
+        for (let i = startIndex; dest === 0 ? i < locations.length : i >= 0; dest === 0 ? i++ : i--) {
+          const myBusStop = locations[i];
+            const url = `${BACKEND_URL}/distance?origins=${busLocation.lat},${busLocation.lng}&destinations=${myBusStop.lat},${myBusStop.lng}&key=${GOOGLE_MAP_KEYS}`;
 
             axios.get(url, {
                 headers: {
@@ -106,12 +103,39 @@ function Map() {
 
             // console.log("Compare: ", mydistance, minDistance);
             if(mydistance < minDistance || minDistance == 0) {
-                minDistance = mydistance;
-                setLocation(mylocation);
-                setnextStop(mynextbus);
-                setTime(mytime);
-                setDistance(mydistance);
-              console.log(`Name is: ${mynextbus} Distance is: ${mydistance} and duration: ${mytime}`);
+
+                // check if we didn't pass on it
+                const url = `${BACKEND_URL}/distance?origins=${myBusStop.lat},${myBusStop.lng}&destinations=${dest_addr_point.lat},${dest_addr_point.lng}&key=${GOOGLE_MAP_KEYS}`;
+
+                axios.get(url, {
+                    headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    },
+                    })
+                .then(response => {
+                     const stopDistanceToDest = parseInt(response.data.rows[0].elements[0].distance.value,10);
+                     console.log(response.data.destination_addresses)
+                     localStorage.setItem('stopDistanceToDest', stopDistanceToDest);
+                })
+                .catch(error => {
+                console.error('Error:', error);
+                });
+
+
+                var stopDistanceToDest = localStorage.getItem('stopDistanceToDest');
+                var myDistanceToDest = localStorage.getItem('myDistanceToDest');
+
+
+                console.log("Compare: ", stopDistanceToDest, myDistanceToDest)
+                if (stopDistanceToDest <= myDistanceToDest) {
+                    minDistance = mydistance;
+                    setLocation(mylocation);
+                    setnextStop(mynextbus);
+                    setTime(mytime);
+                    setDistance(mydistance);
+                    console.log(`Name is: ${mynextbus} Distance is: ${mydistance} and duration: ${mytime}`);
+                }
+
             }
             })
             .catch(error => {
@@ -130,7 +154,10 @@ function Map() {
     useEffect(() => {
         const updateLocation = (position) => {
             const { latitude, longitude } = position.coords;
-            setUserLocation({ lat: latitude, lng: longitude });
+            setBusLocation({ lat: latitude, lng: longitude });
+
+            // uncomment the next line to test with address location in the route inseade of yours
+            // setBusLocation({ lat: -1.9528681, lng: 30.0977072 });
         };
         const watchId = navigator.geolocation.watchPosition(updateLocation);
         return () => {
@@ -143,7 +170,7 @@ function Map() {
         height: '400px',
     };
 
-    if (!userLocation) {
+    if (!busLocation) {
         return <div>Loading...</div>;
     }
 
@@ -163,7 +190,7 @@ function Map() {
                 <GoogleMap
                     mapContainerStyle={mapContainerStyle}
                     zoom={12}
-                    center={userLocation}
+                    center={busLocation}
                 >
                     {/* {locations.map((location) => (
                         <MarkerF
@@ -174,7 +201,7 @@ function Map() {
                     ))} */}
 
                     <MarkerF
-                        position={userLocation}
+                        position={busLocation}
                         title='Ride Location'
                         color="blue"
                     />
@@ -183,7 +210,9 @@ function Map() {
                 </GoogleMap>
             </LoadScript>
 
-            <button onClick={()=> getStatusBarData(0)}>Start Journey</button>
+            Got to:
+            <button className='ml-4' onClick={()=> getStatusBarData(1)}> Kimironko  </button> or
+            <button  className='ml-4' onClick={()=> getStatusBarData(0)}> Nyabugogo </button>
         </div>
 
         </>
