@@ -186,46 +186,59 @@ function Map() {
         <div className="px-4 pt-4 md:w-5/12">
           <div className="text-xl text-gray-700 font-extrabold md:mb-6 md:mt-6 uppercase underline underline-offset-4">
             {" "}
-            {tripNumber ? (
-              "Ride tracking Details"
-            ) : (
-              "Welcome to Ride tracking app"
-            )}
+            {tripNumber
+              ? "Ride tracking Details"
+              : "Ride tracking app"}
           </div>
 
-          <div className="md:flex text-gray-600 flex-col w-full">
-          <div className="pr-4 md:px-0 mb-2 md:mb-0 md:mr-2 md:w-auto">
+          <div className="md:flex text-gray-600 flex-col w-11/12 md:w-full">
+            <div className="pr-4 md:px-0 mb-2 mt-3 md:mt-0 md:mb-0 md:mr-2 md:w-auto">
               <span className="font-semibold  md:my-4"> Trip: </span>{" "}
-              {tripNumber ==0 || tripNumber == 1 ? (
-              <span> {tripNumber == 0 ? "Kimironko - Nyabugogo": "Nyabugogo - Kimironko"}</span> ):(
+              {tripNumber == 0 || tripNumber == 1 ? (
+                <span>
+                  {" "}
+                  {tripNumber == 0
+                    ? "Kimironko - Nyabugogo"
+                    : "Nyabugogo - Kimironko"}
+                </span>
+              ) : (
                 <span></span>
               )}
             </div>
-            <div className="px-4 md:px-0  md:my-4 mb-2 md:mb-0 md:mr-2 md:w-auto">
+            <div className="md:my-4 mb-2 md:mb-0 md:mr-2 md:w-auto">
               <span className="font-semibold  md:my-4">Current Location: </span>{" "}
               {location}
             </div>
-            <div className="px-4 md:px-0  md:my-4 mb-2 md:mb-0 md:mr-2 md:w-auto">
+            <div className="md:my-4 mb-2 md:mb-0 md:mr-2 md:w-auto">
               <span className="font-semibold">Next Bus Stop: </span> {nextStop}
             </div>
-            <div className="px-4 md:px-0  md:my-4 mb-2 md:mb-0 md:mr-2 md:w-auto">
+            <div className="  md:my-4 mb-2 md:mb-0 md:mr-2 md:w-auto">
               <span className="font-semibold">Distance Left: </span>{" "}
               {(distance / 1000).toFixed(1)} Km
             </div>
-            <div className="px-4 md:px-0 md:my-4 mb-2 md:mb-0 md:mr-2 md:w-auto">
-              <span className="font-semibold">Time remaining: </span> {(time / 60).toFixed(0)}{" "}
-              minutes
+            <div className=" md:my-4 mb-2 md:mb-0 md:mr-2 md:w-auto">
+              <span className="font-semibold">Time remaining: </span>{" "}
+              {(time / 60).toFixed(0)} minutes
             </div>
-            <div className="mb-2 md:mt-6">
-              <div className="mb-4 underline underline-offset-4"> Where is your destination? </div>
-              <button className="py-2 px-4 rounded bg-gradient-to-br from-lime-500 to-teal-500 text-gray-100 font-semibold" onClick={() => getStatusBarData(0)}>
+            <div className="mb-2  mt-6">
+              <div className="mb-4 underline underline-offset-4">
                 {" "}
-                 Nyabugogo{" "}
+                Where is your destination address?{" "}
+              </div>
+              <button
+                className="py-2 px-4 rounded bg-gradient-to-br from-lime-500 to-teal-500 text-gray-100 font-semibold"
+                onClick={() => getStatusBarData(0)}
+              >
+                {" "}
+                Nyabugogo{" "}
               </button>
               <span className="mx-2"> or </span>
-              <button className="py-2 px-4 rounded bg-gradient-to-br from-teal-500 to-lime-500 text-gray-100 font-semibold" onClick={() => getStatusBarData(1)}>
+              <button
+                className="py-2 px-4 rounded bg-gradient-to-br from-teal-500 to-lime-500 text-gray-100 font-semibold"
+                onClick={() => getStatusBarData(1)}
+              >
                 {" "}
-                Kimironko {" "}
+                Kimironko{" "}
               </button>{" "}
             </div>
           </div>
